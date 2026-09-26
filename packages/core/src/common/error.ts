@@ -17,6 +17,8 @@ const SECONDARY_ERROR_MESSAGES = {
   GRAPHQL_ERROR: TRY_AGAIN_LATER,
   GITHUB_REST_API_ERROR: TRY_AGAIN_LATER,
   WAKATIME_USER_NOT_FOUND: "Make sure you have a public WakaTime profile",
+  WAKATIME_INVALID_API_DOMAIN:
+    "Supported api_domain values: wakatime.com, wakapi.dev, hackatime.hackclub.com",
   INVALID_AFFILIATION: `Invalid owner affiliations. Valid values are: ${OWNER_AFFILIATIONS.join(
     ", ",
   )}`,

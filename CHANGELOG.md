@@ -12,6 +12,12 @@ Started at v3.0.0 rather than v1.0.0 — this fork's git history carries
 upstream's own release tags up through v2.1.5, so anything in the v1.x/v2.x
 range would collide with an existing tag.
 
+## v3.0.5
+
+### Security
+- The WakaTime card's `api_domain` query parameter was used as-is to build the server-side request URL, letting anyone make the backend fetch arbitrary hosts (SSRF). It's now restricted to an allowlist — `wakatime.com`, `wakapi.dev`, `hackatime.hackclub.com` — and anything else (other hosts, IPs, `localhost`, embedded credentials, custom ports) is rejected with a "Supported api_domain values" error card; the WakaTime card docs list the allowed values
+- The WakaTime `username` is now URL-encoded in the request path, so values like `../../admin?x=` can't rewrite the API path or query
+
 ## v3.0.4
 
 ### Fixed

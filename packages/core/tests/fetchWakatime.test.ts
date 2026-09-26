@@ -131,6 +131,47 @@ describe("WakaTime fetcher", () => {
       "Could not resolve to a User with the login of 'noone'",
     );
   });
+
+  it("should fetch from an allowlisted custom api_domain", async () => {
+    mock
+      .onGet(
+        "https://wakapi.dev/api/v1/users/anuraghazra/stats?is_including_today=true",
+      )
+      .reply(200, wakaTimeData);
+
+    const repo = await fetchWakatimeStats({
+      username: "anuraghazra",
+      api_domain: "wakapi.dev/",
+    });
+    expect(repo).toStrictEqual(wakaTimeData.data);
+  });
+
+  it.each([
+    "evil.example.com",
+    "169.254.169.254",
+    "localhost",
+    "wakatime.com@evil.example.com",
+    "wakatime.com:8080",
+    "wakatime.com.evil.example.com",
+  ])("should reject non-allowlisted api_domain %s", async (api_domain) => {
+    mock.onAny().reply(200, wakaTimeData);
+
+    await expect(
+      fetchWakatimeStats({ username: "anuraghazra", api_domain }),
+    ).rejects.toThrow("Unsupported WakaTime API domain");
+    expect(mock.history.get).toHaveLength(0);
+  });
+
+  it("should URL-encode the username", async () => {
+    mock
+      .onGet(
+        "https://wakatime.com/api/v1/users/..%2F..%2Fadmin%3Fx%3D/stats?is_including_today=true",
+      )
+      .reply(200, wakaTimeData);
+
+    const repo = await fetchWakatimeStats({ username: "../../admin?x=" });
+    expect(repo).toStrictEqual(wakaTimeData.data);
+  });
 });
 
 export { wakaTimeData };
